@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Polystyrène Design - Gestion des Bons de Livraison — Abderraouf</title>
+    <style>
+        :root {
+            --primary: #0f172a;
+            --primary-light: #1e293b;
+            --accent: #0284c7;
+            --accent-hover: #0369a1;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #334155;
+            --border: #cbd5e1;
+            --success: #16a34a;
+            --danger: #dc2626;
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            padding: 12px;
+            direction: ltr;
+            text-align: left;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        /* Header */
+        header {
+            background: var(--primary);
+            color: white;
+            padding: 16px;
+            border-radius: 14px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+        }
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .logo-svg {
+            width: 45px;
+            height: 45px;
+        }
+        .title-area h1 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+        .title-area p {
+            font-size: 0.78rem;
+            color: #94a3b8;
+            margin-top: 2px;
+        }
+        .badge-offline {
+            background: rgba(22, 163, 74, 0.2);
+            color: #4ade80;
+            border: 1px solid rgba(74, 222, 128, 0.3);
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .badge-offline::before {
+            content: '';
+            width: 7px;
+            height: 7px;
+            background: #4ade80;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        /* Navigation Tabs */
+        .nav-tabs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .tab-btn {
+            background: var(--primary-light);
+            color: #cbd5e1;
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+        }
+        .tab-btn.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+        /* Card Sections */
+        .card {
+            background: var(--card-bg);
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 15px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+        }
+        .card-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .form-group {
+            margin-bottom: 12px;
+        }
+        label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #475569;
+            margin-bottom: 5px;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            background: #fff;
+            color: var(--text);
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        input:focus, select:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.1);
+        }
+        .toggle-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+        .toggle-btn {
+            padding: 10px;
+            border: 1px solid var(--border);
+            background: #f1f5f9;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            text-align: center;
+            color: #475569;
+            transition: all 0.2s;
+        }
+        .toggle-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        /* Category chips */
+        .categories-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+        .cat-chip {
+            padding: 6px 12px;
+            background: #f1f5f9;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            color: #475569;
+        }
+        .cat-chip.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        /* Quantity buttons */
+        .qty-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .qty-row input {
+            flex: 1;
+        }
+        .quick-qty {
+            padding: 10px 12px;
+            background: #e0f2fe;
+            color: #0369a1;
+            border: 1px solid #bae6fd;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+        .quick-qty:hover {
+            background: #bae6fd;
+        }
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background 0.2s;
+        }
+        .btn-primary:hover {
+            background: var(--accent-hover);
+        }
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #334155;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        /* Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 0.82rem;
+        }
+        th, td {
+            padding: 8px;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+        th {
+            background: #f1f5f9;
+            color: var(--primary);
+            font-weight: 700;
+        }
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
+        .total-box {
+            margin-top: 12px;
+            background: #f8fafc;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px dashed var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: var(--primary);
+        }
+        .hidden {
+            display: none !important;
+        }
+        .admin-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .stat-card {
+            background: #f8fafc;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+        .stat-card span {
+            font-size: 0.75rem;
+            color: #64748b;
+            display: block;
+            margin-bottom: 3px;
+        }
+        .stat-card strong {
+            font-size: 1.1rem;
+            color: var(--primary);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <div class="header-top">
+            <div class="logo-area">
+                <svg class="logo-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#38bdf8"/>
+                            <stop offset="100%" stop-color="#0284c7"/>
+                        </linearGradient>
+                    </defs>
+                    <polygon points="100,10 185,55 185,145 100,190 15,145 15,55" fill="url(#blueGrad)" stroke="#0369a1" stroke-width="4"/>
+                    <polygon points="50,110 75,50 100,110" fill="#ffffff" opacity="0.9"/>
+                    <rect x="110,70" y="45" width="40" height="65" rx="5" fill="#ffffff" opacity="0.85"/>
+                    <text x="100" y="95" font-size="32" font-weight="bold" fill="#0f172a" text-anchor="middle" font-family="Arial">P</text>
+                </svg>
+                <div class="title-area">
+                    <h1>Polystyrène Design</h1>
+                    <p>Gestion des Bons de Livraison — Abderraouf</p>
+                </div>
+            </div>
+            <div class="badge-offline">Hors-Ligne OK</div>
+        </div>
+        <div class="nav-tabs">
+            <button class="tab-btn active" id="tabBonsBtn" onclick="switchTab('bons')">📋 Bons Abderraouf</button>
+            <button class="tab-btn" id="tabAdminBtn" onclick="switchTab('admin')">⚙️ Administration</button>
+        </div>
+    </header>
+
+    <!-- SECTION BONS -->
+    <div id="sectionBons">
+        <div class="card">
+            <div class="card-title">
+                <span>➕ Nouveau Bon de Livraison</span>
+                <div>
+                    <button class="btn-secondary" onclick="openClientCarnet()">Carnet (7)</button>
+                    <button class="btn-secondary" onclick="resetForm()">Réinitialiser</button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Date du Bon</label>
+                <input type="date" id="bonDate">
+            </div>
+
+            <div class="form-group">
+                <label>Client (Autocomplétion dès 2 lettres)</label>
+                <input type="text" id="clientName" placeholder="Ex: VIVA, Hamza, Smail..." list="clientsList" oninput="checkClient()">
+                <datalist id="clientsList">
+                    <option value="VIVA">
+                    <option value="Hamza">
+                    <option value="Smail">
+                    <option value="Tahar Rida">
+                    <option value="Wahab Emballage">
+                    <option value="Chef Simou">
+                    <option value="Zohir Bourdjk">
+                    <option value="Bilal Biskra">
+                </datalist>
+            </div>
+
+            <div class="form-group">
+                <label>Téléphone Client</label>
+                <input type="tel" id="clientPhone" placeholder="0550 00 00 00">
+            </div>
+
+            <div class="form-group">
+                <label>Tarification Appliquée</label>
+                <div class="toggle-group">
+                    <button type="button" class="toggle-btn active" id="btnSuperGros" onclick="setTarif('superGros')">Super Gros</button>
+                    <button type="button" class="toggle-btn" id="btnGros" onclick="setTarif('gros')">Gros</button>
+                </div>
+            </div>
+
+            <!-- Categories -->
+            <div class="categories-grid">
+                <div class="cat-chip active" onclick="filterCat('all', this)">Tous</div>
+                <div class="cat-chip" onclick="filterCat('cone', this)">Cônes</div>
+                <div class="cat-chip" onclick="filterCat('rond', this)">Rond (Cylindres)</div>
+                <div class="cat-chip" onclick="filterCat('speciaux', this)">Spéciaux & Boules</div>
+            </div>
+
+            <div class="form-group">
+                <label>Modèle / Dimension</label>
+                <select id="itemSelect" onchange="updatePrice()">
+                    <!-- Populated via JS -->
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Quantité</label>
+                <div class="qty-row">
+                    <input type="number" id="itemQty" value="1" min="1" oninput="calcLine()">
+                    <button type="button" class="quick-qty" onclick="addQty(5)">+5</button>
+                    <button type="button" class="quick-qty" onclick="addQty(10)">+10</button>
+                    <button type="button" class="quick-qty" onclick="addQty(50)">+50</button>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div class="form-group">
+                    <label>Prix Unitaire (DA)</label>
+                    <input type="number" id="itemPrice" readonly style="background:#f8fafc; font-weight:700;">
+                </div>
+                <div class="form-group">
+                    <label>Total Ligne (DA)</label>
+                    <input type="number" id="itemTotal" readonly style="background:#f8fafc; font-weight:700; color:var(--accent);">
+                </div>
+            </div>
+
+            <button class="btn-primary" onclick="addItemToBon()">➕ Ajouter au Bon</button>
+        </div>
+
+        <!-- Current Bon Items -->
+        <div class="card">
+            <div class="card-title"><span>🛒 Articles du Bon en cours</span></div>
+            <table id="currentBonTable">
+                <thead>
+                    <tr>
+                        <th>Article</th>
+                        <th>Qté</th>
+                        <th>P.U</th>
+                        <th>Total</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td colspan="5" style="color: #94a3b8; text-align:center;">Aucun article ajouté</td></tr>
+                </tbody>
+            </table>
+            <div class="total-box">
+                <span>Total du Bon :</span>
+                <span id="bonGrandTotal">0 DA</span>
+            </div>
+            <button class="btn-primary" style="background:var(--success); margin-top:12px;" onclick="saveBonFinal()">💾 Enregistrer et Archiver le Bon</button>
+        </div>
+    </div>
+
+    <!-- SECTION ADMIN -->
+    <div id="sectionAdmin" class="hidden">
+        <div class="card">
+            <div class="card-title"><span>📊 Bilan & Suivi Financier (Novembre 2026)</span></div>
+            <div class="admin-stats">
+                <div class="stat-card">
+                    <span>Chiffre d'Affaires Total</span>
+                    <strong id="adminTotalSales">0 DA</strong>
+                </div>
+                <div class="stat-card">
+                    <span>Charges Fixes (Salaires+Film+Scotch)</span>
+                    <strong>93,000 DA</strong>
+                </div>
+                <div class="stat-card">
+                    <span>Bénéfice Net Global</span>
+                    <strong id="adminNetProfit" style="color:var(--success);">0 DA</strong>
+                </div>
+                <div class="stat-card">
+                    <span>Part / Associé (3 Partenaires)</span>
+                    <strong id="adminPartnerShare" style="color:var(--accent);">0 DA</strong>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Heures de travail cumulées :</label>
+                <input type="number" id="adminWorkHours" value="20" onchange="updateAdminStats()">
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title"><span>📂 Historique des Bons Enregistrés</span></div>
+            <table id="historyTable">
+                <thead>
+                    <tr>
+                        <th>Client</th>
+                        <th>Date</th>
+                        <th>Montant</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- History items -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Tarifs data (Super Gros & Gros)
+    const catalog = {
+        superGros: [
+            { name: "Cône H10 cm", cat: "cone", price: 70 },
+            { name: "Cône H15 cm", cat: "cone", price: 90 },
+            { name: "Cône H20 cm", cat: "cone", price: 120 },
+            { name: "Cône H25 cm", cat: "cone", price: 170 },
+            { name: "Cône H30 cm", cat: "cone", price: 220 },
+            { name: "Cône H35 cm", cat: "cone", price: 280 },
+            { name: "Cône H40 cm", cat: "cone", price: 320 },
+            { name: "Cône H45 cm", cat: "cone", price: 370 },
+            { name: "Cône H50 cm", cat: "cone", price: 400 },
+            { name: "Cône H55 cm", cat: "cone", price: 450 },
+            { name: "Cône H60 cm", cat: "cone", price: 500 },
+            { name: "Cône H65 cm", cat: "cone", price: 580 },
+            { name: "Cône H70 cm", cat: "cone", price: 660 },
+            { name: "Cône H75 cm", cat: "cone", price: 740 },
+            { name: "Cône H80 cm", cat: "cone", price: 820 },
+            { name: "Cône H85 cm", cat: "cone", price: 900 },
+            { name: "Cône H90 cm", cat: "cone", price: 980 },
+            { name: "Rond 10/3", cat: "rond", price: 35 },
+            { name: "Rond 15/3", cat: "rond", price: 55 },
+            { name: "Rond 20/3", cat: "rond", price: 65 },
+            { name: "Rond 25/3", cat: "rond", price: 85 },
+            { name: "Rond 30/3", cat: "rond", price: 105 },
+            { name: "Rond 35/3", cat: "rond", price: 145 },
+            { name: "Rond 40/3", cat: "rond", price: 175 },
+            { name: "Rond 45/3", cat: "rond", price: 225 },
+            { name: "Rond 50/3", cat: "rond", price: 285 },
+            { name: "Rond 10/5", cat: "rond", price: 50 },
+            { name: "Rond 20/5", cat: "rond", price: 80 },
+            { name: "Rond 30/5", cat: "rond", price: 120 },
+            { name: "Rond 50/5", cat: "rond", price: 300 },
+            { name: "Cœur / Spécial 20/3", cat: "speciaux", price: 75 },
+            { name: "Cœur / Spécial 30/3", cat: "speciaux", price: 115 },
+            { name: "Boîte Polystyrène 20 cm", cat: "speciaux", price: 250 },
+            { name: "Boîte Polystyrène 30 cm", cat: "speciaux", price: 450 },
+            { name: "Boule 08 cm", cat: "speciaux", price: 110 },
+            { name: "Boule 12 cm", cat: "speciaux", price: 220 },
+            { name: "Cœur 3D 10cm", cat: "speciaux", price: 110 }
+        ],
+        gros: [
+            { name: "Cône H10 cm", cat: "cone", price: 90 },
+            { name: "Cône H15 cm", cat: "cone", price: 100 },
+            { name: "Cône H20 cm", cat: "cone", price: 150 },
+            { name: "Cône H25 cm", cat: "cone", price: 200 },
+            { name: "Cône H30 cm", cat: "cone", price: 250 },
+            { name: "Cône H35 cm", cat: "cone", price: 300 },
+            { name: "Cône H40 cm", cat: "cone", price: 350 },
+            { name: "Cône H45 cm", cat: "cone", price: 400 },
+            { name: "Cône H50 cm", cat: "cone", price: 450 },
+            { name: "Cône H55 cm", cat: "cone", price: 500 },
+            { name: "Cône H60 cm", cat: "cone", price: 550 },
+            { name: "Cône H65 cm", cat: "cone", price: 630 },
+            { name: "Cône H70 cm", cat: "cone", price: 710 },
+            { name: "Cône H75 cm", cat: "cone", price: 790 },
+            { name: "Cône H80 cm", cat: "cone", price: 870 },
+            { name: "Cône H85 cm", cat: "cone", price: 950 },
+            { name: "Cône H90 cm", cat: "cone", price: 1030 },
+            { name: "Rond 10/3", cat: "rond", price: 80 },
+            { name: "Rond 15/3", cat: "rond", price: 100 },
+            { name: "Rond 20/3", cat: "rond", price: 110 },
+            { name: "Rond 25/3", cat: "rond", price: 130 },
+            { name: "Rond 30/3", cat: "rond", price: 150 },
+            { name: "Rond 35/3", cat: "rond", price: 190 },
+            { name: "Rond 40/3", cat: "rond", price: 270 },
+            { name: "Rond 45/3", cat: "rond", price: 360 },
+            { name: "Rond 50/3", cat: "rond", price: 460 },
+            { name: "Rond 10/5", cat: "rond", price: 100 },
+            { name: "Rond 20/5", cat: "rond", price: 130 },
+            { name: "Rond 30/5", cat: "rond", price: 170 },
+            { name: "Rond 50/5", cat: "rond", price: 350 },
+            { name: "Cœur / Spécial 20/3", cat: "speciaux", price: 120 },
+            { name: "Cœur / Spécial 30/3", cat: "speciaux", price: 160 },
+            { name: "Boîte Polystyrène 20 cm", cat: "speciaux", price: 300 },
+            { name: "Boîte Polystyrène 30 cm", cat: "speciaux", price: 500 },
+            { name: "Boule 08 cm", cat: "speciaux", price: 120 },
+            { name: "Boule 12 cm", cat: "speciaux", price: 230 },
+            { name: "Cœur 3D 10cm", cat: "speciaux", price: 130 }
+        ]
+    };
+
+    let currentTarif = 'superGros';
+    let currentFilter = 'all';
+    let currentCart = [];
+    let savedBons = [
+        { client: "B pack (Ancien)", date: "2026-11-01", total: 223400 },
+        { client: "Tahar Rida", date: "2026-11-16", total: 30950 },
+        { client: "Wahab Emballage", date: "2026-11-16", total: 74270 },
+        { client: "Chef Simou", date: "2026-11-16", total: 18000 },
+        { client: "Zohir Bourdjk", date: "2026-11-16", total: 9000 },
+        { client: "Bilal Biskra", date: "2026-11-16", total: 93430 }
+    ];
+    let fixedExpenses = 93000; // Salaires (33k+33k) + Film (20k) + Scotch (7k)
+
+    function init() {
+        document.getElementById('bonDate').valueAsDate = new Date();
+        populateSelect();
+        updateAdminStats();
+    }
+
+    function switchTab(tab) {
+        if(tab === 'bons') {
+            document.getElementById('sectionBons').classList.remove('hidden');
+            document.getElementById('sectionAdmin').classList.add('hidden');
+            document.getElementById('tabBonsBtn').classList.add('active');
+            document.getElementById('tabAdminBtn').classList.remove('active');
+        } else {
+            document.getElementById('sectionBons').classList.add('hidden');
+            document.getElementById('sectionAdmin').classList.remove('hidden');
+            document.getElementById('tabBonsBtn').classList.remove('active');
+            document.getElementById('tabAdminBtn').classList.add('active');
+            renderHistory();
+        }
+    }
+
+    function setTarif(tarif) {
+        currentTarif = tarif;
+        document.getElementById('btnSuperGros').classList.toggle('active', tarif === 'superGros');
+        document.getElementById('btnGros').classList.toggle('active', tarif === 'gros');
+        populateSelect();
+    }
+
+    function filterCat(cat, el) {
+        currentFilter = cat;
+        document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
+        el.classList.add('active');
+        populateSelect();
+    }
+
+    function populateSelect() {
+        const select = document.getElementById('itemSelect');
+        select.innerHTML = '';
+        let items = catalog[currentTarif];
+        if(currentFilter !== 'all') {
+            items = items.filter(i => i.cat === currentFilter);
+        }
+        items.forEach((item, idx) => {
+            let opt = document.createElement('option');
+            opt.value = idx;
+            opt.textContent = `${item.name} — (${item.price} DA)`;
+            select.appendChild(opt);
+        });
+        updatePrice();
+    }
+
+    function updatePrice() {
+        const select = document.getElementById('itemSelect');
+        const idx = select.value;
+        if(idx === '') return;
+        let items = catalog[currentTarif];
+        if(currentFilter !== 'all') {
+            items = items.filter(i => i.cat === currentFilter);
+        }
+        let item = items[idx];
+        if(item) {
+            document.getElementById('itemPrice').value = item.price;
+            calcLine();
+        }
+    }
+
+    function addQty(val) {
+        let q = document.getElementById('itemQty');
+        q.value = parseInt(q.value || 1) + val;
+        calcLine();
+    }
+
+    function calcLine() {
+        let price = parseFloat(document.getElementById('itemPrice').value) || 0;
+        let qty = parseInt(document.getElementById('itemQty').value) || 1;
+        document.getElementById('itemTotal').value = price * qty;
+    }
+
+    function addItemToBon() {
+        const select = document.getElementById('itemSelect');
+        const idx = select.value;
+        if(idx === '') return;
+        let items = catalog[currentTarif];
+        if(currentFilter !== 'all') {
+            items = items.filter(i => i.cat === currentFilter);
+        }
+        let item = items[idx];
+        let qty = parseInt(document.getElementById('itemQty').value) || 1;
+        let total = item.price * qty;
+
+        currentCart.push({ name: item.name, qty: qty, price: item.price, total: total });
+        renderCart();
+    }
+
+    function renderCart() {
+        const tbody = document.querySelector('#currentBonTable tbody');
+        tbody.innerHTML = '';
+        if(currentCart.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="5" style="color: #94a3b8; text-align:center;">Aucun article ajouté</td></tr>`;
+            document.getElementById('bonGrandTotal').textContent = '0 DA';
+            return;
+        }
+        let grandTotal = 0;
+        currentCart.forEach((item, i) => {
+            grandTotal += item.total;
+            let tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${item.name}</td>
+                <td>${item.qty}</td>
+                <td>${item.price} DA</td>
+                <td>${item.total} DA</td>
+                <td><button class="btn-danger" onclick="removeCartItem(${i})">X</button></td>
+            `;
+            tbody.appendChild(tr);
+        });
+        document.getElementById('bonGrandTotal').textContent = grandTotal.toLocaleString() + ' DA';
+    }
+
+    function removeCartItem(i) {
+        currentCart.splice(i, 1);
+        renderCart();
+    }
+
+    function saveBonFinal() {
+        let client = document.getElementById('clientName').value.trim() || 'Client Abderraouf';
+        let date = document.getElementById('bonDate').value;
+        let grandTotal = currentCart.reduce((s, i) => s + i.total, 0);
+        if(grandTotal === 0) {
+            alert("Le bon est vide !");
+            return;
+        }
+        savedBons.push({ client: client, date: date, total: grandTotal });
+        alert("Bon enregistré et archivé avec succès !");
+        currentCart = [];
+        renderCart();
+        updateAdminStats();
+    }
+
+    function updateAdminStats() {
+        let totalSales = savedBons.reduce((s, b) => s + b.total, 0);
+        let estCost = totalSales * 0.45;
+        let netProfit = (totalSales - estCost) - fixedExpenses;
+        if(netProfit < 0) netProfit = 0;
+        let partnerShare = netProfit / 3;
+
+        document.getElementById('adminTotalSales').textContent = totalSales.toLocaleString() + ' DA';
+        document.getElementById('adminNetProfit').textContent = netProfit.toLocaleString() + ' DA';
+        document.getElementById('adminPartnerShare').textContent = partnerShare.toLocaleString() + ' DA';
+    }
+
+    function renderHistory() {
+        const tbody = document.querySelector('#historyTable tbody');
+        tbody.innerHTML = '';
+        savedBons.forEach(b => {
+            let tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${b.client}</td>
+                <td>${b.date}</td>
+                <td><strong>${b.total.toLocaleString()} DA</strong></td>
+                <td><span style="color:var(--success); font-weight:600;">Validé</span></td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function resetForm() {
+        currentCart = [];
+        renderCart();
+        document.getElementById('clientName').value = '';
+        document.getElementById('clientPhone').value = '';
+    }
+
+    function openClientCarnet() {
+        alert("Carnet Clients (7 clients enregistrés: VIVA, Hamza, Smail, Tahar Rida, Wahab Emballage, Chef Simou, Bilal Biskra).");
+    }
+
+    window.onload = init;
+</script>
+
+</body>
+</html>
